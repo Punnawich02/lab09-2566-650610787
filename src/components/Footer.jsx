@@ -1,3 +1,5 @@
+"use client";
+
 export const Footer = (props) => {
   return (
     <div className="mt-3">
