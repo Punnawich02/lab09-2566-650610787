@@ -10,21 +10,28 @@ import { useState } from "react";
 export default function Home() {
   //tasks = array of {id: string, title: string, completed: boolean}
   const [tasks, setTasks] = useState([]);
-  const [AllTask,setAllTask] = useState(0);
-  const [done,setDone] = useState(0);
+  const [allTask, setAllTask] = useState(0);
+  const [doneTask, setDoneTask] = useState(0);
 
   const addTask = (newTaskTitle) => {
     const newTask = { id: nanoid(), title: newTaskTitle, completed: false };
     const newTasks = [...tasks, newTask];
     setTasks(newTasks);
-    setAllTask(AllTask+1);
+    setAllTask(allTask+1);
   };
 
   const deleteTask = (taskId) => {
     const newTasks = tasks.filter((task) => task.id !== taskId);
-    setDone(done-tasks.filter((task) => task.id === taskId).map((task => task.completed)).reduce((cur,pre) => cur+pre, 0));
     setTasks(newTasks);
-    setAllTask(AllTask-1);
+    setAllTask(allTask-1);
+
+    const taskToDelete = tasks.find((task) => task.id === taskId);
+
+    if (taskToDelete.completed) {
+      setDoneTask(doneTask - 1);
+    } else {
+      setDoneTask(doneTask);
+    }
   };
 
   const toggleDoneTask = (taskId) => {
@@ -35,7 +42,8 @@ export default function Home() {
     const task = newTasks.find((x) => x.id === taskId);
     task.completed = !task.completed;
     setTasks(newTasks);
-    setDone(done+(task.completed ? 1:-1));
+    const completeTask = newTasks.filter((task) => task.completed);
+    setDoneTask(completeTask.length);
   };
 
   return (
@@ -47,7 +55,7 @@ export default function Home() {
       <div style={{ maxWidth: "400px" }} className="mx-auto">
         {/* Task summary */}
         <p className="text-center text-secondary fst-italic">
-          All ({AllTask}) Done ({done})
+          All ({allTask}) Done ({doneTask})
         </p>
         {/* task input */}
         <TaskInput addTaskFunc={addTask} />
